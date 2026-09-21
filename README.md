@@ -24,13 +24,25 @@ depend on context:
 This library turns that text into a structured `SanMove` and gives back a
 specific parse error when it can't, rather than a generic "invalid move."
 
+It also parses FEN (Forsyth-Edwards Notation), the standard way to write
+down a full board position - piece placement, side to move, castling
+rights, en passant target, halfmove clock, and fullmove number:
+
+```rust
+use chess_notation::parse_fen;
+
+let board = parse_fen("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1").unwrap();
+assert_eq!(board.fullmove_number, 1);
+assert_eq!(board.en_passant.unwrap().to_string(), "e3");
+```
+
 ## What it does not do
 
-It parses the *shape* of the move text. It does not know about a board, so
-it can't tell you whether `Nf3` is legal in a given position, resolve
-disambiguation against actual piece placement, or check for things like
-moving into check. That's a natural next step, not something this crate
-claims to do yet.
+SAN parsing here handles the *shape* of move text; FEN parsing handles the
+*shape* of a position. Nothing yet connects the two - resolving a SAN
+move's disambiguation against a `Board`'s actual piece placement, checking
+legality, or generating SAN from a move plus position. That's the natural
+next step.
 
 ## Usage
 
@@ -66,6 +78,12 @@ the awkward corners above (file/rank/full disambiguation, pawn captures,
 promotion combined with capture, castling with check, and a handful of
 malformed inputs), checked against every field of the parsed result plus a
 round trip back through `Display`.
+
+`tests/fen_parsing.rs` follows the same pattern for board positions: a few
+full games' worth of FEN strings checked field by field plus spot checks on
+individual squares, a `Display` round trip, and a set of malformed FENs
+(wrong field count, wrong rank count, ranks that are too long or short,
+invalid piece letters, bad castling/en-passant/move-counter fields).
 
 ## Status
 

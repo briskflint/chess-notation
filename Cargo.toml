@@ -3,6 +3,6 @@ name = "chess-notation"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-description = "Parses and validates standard algebraic chess move notation"
+description = "Parses standard algebraic chess move notation and FEN board positions"
 
 [dependencies]

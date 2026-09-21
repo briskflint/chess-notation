@@ -1,12 +1,22 @@
-//! Parsing for standard algebraic notation (SAN) chess move text.
+//! Parsing for standard algebraic notation (SAN) chess move text and FEN
+//! board positions.
 //!
-//! This crate handles the shape of a move string - piece, disambiguation,
-//! capture marker, destination square, promotion, and check/mate suffix -
-//! without knowing anything about a board position. A string like "Nbd7"
-//! or "exd8=Q+" parses into a structured `SanMove`; whether that move is
-//! actually legal in some game is out of scope here.
+//! `parse_san` handles the shape of a move string - piece, disambiguation,
+//! capture marker, destination square, promotion, and check/mate suffix - on
+//! its own, without reference to any position. A string like "Nbd7" or
+//! "exd8=Q+" parses into a structured `SanMove`.
+//!
+//! `parse_fen` handles the shape of a board position - piece placement,
+//! side to move, castling rights, en passant target, and move counters -
+//! into a `Board`. The two are not yet connected: resolving a `SanMove`'s
+//! disambiguation against a `Board`'s actual piece placement, or checking
+//! whether a move is legal, is out of scope here.
 
 use std::fmt;
+
+mod fen;
+
+pub use fen::{parse_fen, Board, CastlingRights, Color, FenError};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Piece {
